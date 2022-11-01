@@ -1,4 +1,4 @@
-package com.xperiencelabs.krypto
+package com.xperiencelabs.krypto.presenter
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.xperiencelabs.krypto.ui.theme.KryptoTheme
+import com.xperiencelabs.krypto.presenter.theme.KryptoTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+    Text(text = "Welcome $name!")
 }
 
 @Preview(showBackground = true)

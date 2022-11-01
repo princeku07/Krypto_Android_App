@@ -1,4 +1,4 @@
-package com.xperiencelabs.krypto.ui.theme
+package com.xperiencelabs.krypto.presenter.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

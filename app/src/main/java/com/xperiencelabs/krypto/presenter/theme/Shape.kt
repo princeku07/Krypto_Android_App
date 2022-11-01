@@ -1,4 +1,4 @@
-package com.xperiencelabs.krypto.ui.theme
+package com.xperiencelabs.krypto.presenter.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
