@@ -1,4 +1,4 @@
-package com.xperiencelabs.krypto.common
+package com.xperiencelabs.krypto.utils
 
 //check network call status and react as response
 sealed class Response<T> (val data: T? = null,val message:String?=null){
