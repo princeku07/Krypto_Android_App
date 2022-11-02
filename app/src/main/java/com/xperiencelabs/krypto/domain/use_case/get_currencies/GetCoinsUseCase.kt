@@ -10,7 +10,7 @@ import java.io.IOException
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetCoinUseCase @Inject constructor(
+class GetCoinsUseCase @Inject constructor(
     private val repository:CoinRepository
 ){
     /*  Using Coroutine flow
