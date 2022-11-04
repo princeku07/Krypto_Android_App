@@ -48,7 +48,8 @@ fun CoinDetailDTO.toCoinDetail():CoinDetail{
         rank = rank,
         isActive = isActive,
         team = team,
-        tags = tags.map { it.name },
+        tags = tags.map {
+            it.name },
         logo = logo
     )
 }

@@ -14,6 +14,9 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 //A Hilt View Model is a jetpack viewModel that is constructor injected by Hilt. To enable injection of a ViewModel by Hilt
+//A handle to saved state passed down to androidx.lifecycle.ViewModel.
+// You should use SavedStateViewModelFactory if you want to receive this object in ViewModel's constructor.
+// "https://developer.android.com/reference/androidx/lifecycle/SavedStateHandle"
 @HiltViewModel
 class CurrencyDetailViewModel @Inject constructor(
     private val getCoinUseCase: GetCoinUseCase,

@@ -1,6 +1,7 @@
 package com.xperiencelabs.krypto.domain.model
 
 import com.xperiencelabs.krypto.data.remote.dto.Creators
+import com.xperiencelabs.krypto.data.remote.dto.Quotes
 
 data class CoinDetail(
     val coinId:String,
@@ -11,6 +12,5 @@ data class CoinDetail(
     val isActive:Boolean,
     val team:List<Creators>,
     val tags:List<String>,
-    val logo:String
-
+    val logo:String,
 )
