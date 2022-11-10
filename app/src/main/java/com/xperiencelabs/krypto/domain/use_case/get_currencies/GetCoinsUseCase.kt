@@ -23,7 +23,8 @@ class GetCoinsUseCase @Inject constructor(
                 emit(Response.Loading())
             val coins = repository.getCoins().map {
                 it.toCoin() }
-            emit(Response.Success(coins))
+
+            emit(Response.Success(coins.slice(0..10)))
         }
         catch (e:HttpException){
                 emit(Response.Error(e.localizedMessage ?: "error" ))

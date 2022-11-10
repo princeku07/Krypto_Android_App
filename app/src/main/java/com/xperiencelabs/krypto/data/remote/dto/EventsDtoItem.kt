@@ -1,6 +1,6 @@
 package com.xperiencelabs.krypto.data.remote.dto
 
-data class EventsItemDto(
+data class EventsEntity(
     val date: String,
     val date_to: String,
     val description: String,

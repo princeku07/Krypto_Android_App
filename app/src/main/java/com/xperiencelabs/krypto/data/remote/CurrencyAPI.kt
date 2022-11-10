@@ -1,9 +1,6 @@
 package com.xperiencelabs.krypto.data.remote
 
-import com.xperiencelabs.krypto.data.remote.dto.CoinDTO
-import com.xperiencelabs.krypto.data.remote.dto.CoinDetailDTO
-import com.xperiencelabs.krypto.data.remote.dto.NewsService
-import com.xperiencelabs.krypto.data.remote.dto.TickerEntity
+import com.xperiencelabs.krypto.data.remote.dto.*
 import com.xperiencelabs.krypto.domain.model.GlobalStats
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -35,7 +32,7 @@ interface CurrencyAPI {
 
         //get events
         @GET("coins/{coinId}/events")
-        suspend fun getEvents(@Path("coinId") coinId:String)
+        suspend fun getEvents(@Path("coinId") coinId:String):List<EventsEntity>
 
         //get market of particular currency
         @GET("coins/{coinId}/markets")

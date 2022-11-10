@@ -3,6 +3,7 @@ package com.xperiencelabs.krypto.presenter.currency_detail
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -29,6 +30,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.xperiencelabs.krypto.R
 import com.xperiencelabs.krypto.presenter.LottieAnimation
+import com.xperiencelabs.krypto.presenter.Screen
 import com.xperiencelabs.krypto.presenter.theme.*
 import com.xperiencelabs.krypto.utils.TopBarCollapsedHeight
 import com.xperiencelabs.krypto.utils.TopBarExpandedHeight
@@ -36,7 +38,7 @@ import com.xperiencelabs.krypto.utils.TopBarExpandedHeight
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun CoinDetail(
-//    navController: NavController,
+    navController: NavController,
     viewModel: CurrencyDetailViewModel = hiltViewModel()
 
     ) {
@@ -151,7 +153,13 @@ fun CoinDetail(
 
                                 }, colors = ButtonDefaults.buttonColors(backgroundColor = gradient1)
                                 ) {
-                                    Text(text = "Events", style = MaterialTheme.typography.h6, color = Color.White)
+                                    Text(text = "Events",
+                                        style = MaterialTheme.typography.h6,
+                                        color = Color.White,
+                                        modifier = Modifier.clickable {
+                                            navController.navigate(Screen.EventsScreen.route + "/${tickers.id}")
+                                        }
+                                        )
                                 }
                                 Button(
                                     onClick = {

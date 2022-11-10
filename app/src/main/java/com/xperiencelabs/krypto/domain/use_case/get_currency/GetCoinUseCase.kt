@@ -25,7 +25,8 @@ class GetCoinUseCase @Inject constructor(
         try {
                 emit(Response.Loading())
             val coin = repository.getTickersById(coinId)
-            emit(Response.Success(coin))
+                emit(Response.Success(coin))
+
         }
         catch (e:HttpException){
                 emit(Response.Error(e.localizedMessage ?: "error" ))

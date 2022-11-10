@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import com.xperiencelabs.krypto.presenter.Screen
 import com.xperiencelabs.krypto.presenter.SplashScreen
 import com.xperiencelabs.krypto.presenter.currency_detail.CoinDetail
+import com.xperiencelabs.krypto.presenter.events.components.EventScreen
 import com.xperiencelabs.krypto.presenter.home_screen.CoinListScreen
 import com.xperiencelabs.krypto.presenter.home_screen.HomeScreen
 import com.xperiencelabs.krypto.presenter.home_screen.components.TopTenCoins
@@ -40,7 +41,11 @@ class MainActivity : ComponentActivity() {
                         }
                         //CoinDetail
                         composable(route = Screen.CoinDetail.route + "/{coinId}"){
-                            CoinDetail()
+                            CoinDetail(navController)
+                        }
+                        //CoinEvents
+                        composable(route = Screen.EventsScreen.route +"/{coinId}"){
+                            EventScreen()
                         }
                     }
                 }
