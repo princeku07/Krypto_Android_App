@@ -32,7 +32,15 @@ interface CurrencyAPI {
         //Getting latest news
         @GET("news/latest")
         suspend fun getNews(@Query("limit") limit:Int) :List<NewsService>
-        //
+
+        //get events
+        @GET("coins/{coinId}/events")
+        suspend fun getEvents(@Path("coinId") coinId:String)
+
+        //get market of particular currency
+        @GET("coins/{coinId}/markets")
+        suspend fun getMarkets(@Path("coinId") coinId: String)
+
 
 
 

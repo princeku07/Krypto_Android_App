@@ -1,21 +1,22 @@
 package com.xperiencelabs.krypto.presenter.home_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
@@ -32,55 +33,65 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.glide.GlideImage
 import com.xperiencelabs.krypto.R
 import com.xperiencelabs.krypto.domain.model.*
+import com.xperiencelabs.krypto.presenter.Screen
+import com.xperiencelabs.krypto.presenter.home_screen.components.CoinCard
+import com.xperiencelabs.krypto.presenter.home_screen.components.TopTenCoins
 import com.xperiencelabs.krypto.presenter.theme.*
 
-
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen() {
-    val scrollState = rememberLazyListState()
+fun HomeScreen(navController: NavController) {
     val gradientColor = Brush.verticalGradient(listOf(gradient1, gradient2))
-    Box(modifier = Modifier
-        .scrollable(scrollState,Orientation.Vertical)
-        .background(gradientColor)
-    ){
-        Column() {
-            UserGreetings(name = "Prince Kumar")
-            Spacer(modifier = Modifier.height(15.dp))
-            SelectedCurrency()
-            SearchBar()
-            LatestNews(listOf(
-                LatestNewsItems(
-                        "A record 55,000 Bitcoin, or over $1.1 billion, was just withdrawn from Binance",
-                    "Some serious withdrawals are occurring on the world’s biggest crypto exchange by volume",
-                    "01-01-2001",
+    val scaffoldState = rememberScaffoldState()
+    val scrollState = rememberScrollState()
+    Scaffold(scaffoldState=scaffoldState) {
 
-                    ),
-                LatestNewsItems(
-                    "A record 55,000 Bitcoin, or over $1.1 billion, was just withdrawn from Binance",
-                    "Some serious withdrawals are occurring on the world’s biggest crypto exchange by volume",
-                    "01-01-2001",
+        Column(modifier = Modifier.background(gradientColor).fillMaxSize()) {
+
+//            UserGreetings(name = "Prince Kumar")
+//            Spacer(modifier = Modifier.height(15.dp))
+//            SelectedCurrency()
+//            SearchBar()
+//            LatestNews(listOf(
+//                LatestNewsItems(
+//                    "A record 55,000 Bitcoin, or over $1.1 billion, was just withdrawn from Binance",
+//                    "Some serious withdrawals are occurring on the world’s biggest crypto exchange by volume",
+//                    "01-01-2001",
+//
+//                    ),
+//                LatestNewsItems(
+//                    "A record 55,000 Bitcoin, or over $1.1 billion, was just withdrawn from Binance",
+//                    "Some serious withdrawals are occurring on the world’s biggest crypto exchange by volume",
+//                    "01-01-2001",
+//
+//
+//                    ),
+//                LatestNewsItems(
+//
+//                    "A record 55,000 Bitcoin, or over $1.1 billion, was just withdrawn from Binance",
+//                    "Some serious withdrawals are occurring on the world’s biggest crypto exchange by volume",
+//                    "01-01-2001"
+//
+//                )
+//            ))
+//            Spacer(modifier = Modifier.height(15.dp))
+            TopTenCoins(navController = navController)
 
 
-                ),
-                LatestNewsItems(
-
-                    "A record 55,000 Bitcoin, or over $1.1 billion, was just withdrawn from Binance",
-                    "Some serious withdrawals are occurring on the world’s biggest crypto exchange by volume",
-                    "01-01-2001"
-
-                )
-            ))
 
 
 
         }
     }
-
 }
+
+
 
 
 
@@ -144,11 +155,12 @@ fun SelectedCurrency(
             modifier = Modifier
                 .padding(start = 15.dp, end = 15.dp)
                 .aspectRatio(1.75f, matchHeightConstraintsFirst = true)
-                .background(card)
                 .border(
                     1.dp, gold, shape = RoundedCornerShape(30.dp)
                 )
                 .clip(RoundedCornerShape(30.dp))
+                .background(card)
+
 
         ) {
             val width = constraints.maxWidth
@@ -354,7 +366,7 @@ modifier: Modifier = Modifier
      Column(
          modifier = modifier
              .fillMaxWidth()
-             .padding(2.dp)
+             .padding(5.dp)
      ) {
          Text(text = "Latest news", style = MaterialTheme.typography.h6, color = Color.White, modifier = modifier.padding(15.dp))
          LazyColumn(contentPadding = PaddingValues(start = 5.dp, end = 5.dp, bottom = 50.dp),
@@ -374,7 +386,7 @@ fun SingleNewsItem(
       Column(
           verticalArrangement = Arrangement.SpaceBetween,
           modifier = Modifier
-              .padding(1.dp)
+              .padding(5.dp)
               .clip(RoundedCornerShape(10.dp))
               .background(newsBackground)
               .padding(horizontal = 8.dp,)
