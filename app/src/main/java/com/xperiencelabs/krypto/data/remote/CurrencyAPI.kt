@@ -14,6 +14,10 @@ interface CurrencyAPI {
         @GET("coins")
         suspend fun getCoins():List<CoinDTO>
 
+        //get tickers
+        @GET("tickers")
+        suspend fun getTickers():List<TickerEntity>
+
         //get coin by Id
         @GET("coins/{coinId}")
         suspend fun getCoinById(@Path("coinId") coinId:String) : CoinDetailDTO
@@ -27,8 +31,9 @@ interface CurrencyAPI {
         suspend fun getGlobalStats():GlobalStats
 
         //Getting latest news
-        @GET("news/latest")
-        suspend fun getNews(@Query("limit") limit:Int) :List<NewsService>
+        @GET("news/latest/")
+        suspend fun getLatestNews(@Query("limit") limit: Int): List<NewsEntity>
+
 
         //get events
         @GET("coins/{coinId}/events")

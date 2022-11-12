@@ -1,5 +1,6 @@
 package com.xperiencelabs.krypto.domain.use_case.get_currency
 
+import android.annotation.SuppressLint
 import com.xperiencelabs.krypto.data.remote.dto.TickerEntity
 import com.xperiencelabs.krypto.data.remote.dto.toCoin
 import com.xperiencelabs.krypto.data.remote.dto.toCoinDetail
@@ -21,6 +22,7 @@ class GetCoinUseCase @Inject constructor(
     Flow can emit multiple values sequentially (used to receive live updates from a database).It is a stream of data
     that can be computed asynchronously.(Resource = https://developer.android.com/kotlin/flow)
      */
+    @SuppressLint("SuspiciousIndentation")
     operator fun invoke(coinId:String): Flow<Response<TickerEntity>> = flow {
         try {
                 emit(Response.Loading())

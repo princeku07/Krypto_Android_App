@@ -1,36 +1,46 @@
 package com.xperiencelabs.krypto.presenter.home_screen.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.skydoves.landscapist.glide.GlideImage
-import com.xperiencelabs.krypto.domain.model.Coin
+import com.xperiencelabs.krypto.R
+import com.xperiencelabs.krypto.data.remote.dto.TickerEntity
 import com.xperiencelabs.krypto.presenter.LottieAnimation
-import com.xperiencelabs.krypto.presenter.Screen
+import com.xperiencelabs.krypto.presenter.Screen_routes
 import com.xperiencelabs.krypto.presenter.home_screen.MainViewModel
-import com.xperiencelabs.krypto.presenter.theme.cardGradient1
-import com.xperiencelabs.krypto.presenter.theme.cardGradient2
-import com.xperiencelabs.krypto.presenter.theme.gold
-import com.xperiencelabs.krypto.presenter.theme.gradient2
+import com.xperiencelabs.krypto.presenter.home_screen.standardQuadFromTO
+import com.xperiencelabs.krypto.presenter.theme.*
+import kotlin.math.roundToInt
 
 
 @Composable
@@ -50,13 +60,11 @@ fun TopTenCoins(
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp, bottom = 100.dp),
-
-
                 ){
                 items(state.coins){ coin->
                     CoinCard(coin = coin,
                         onItemClick = {
-                            navController.navigate(Screen.CoinDetail.route + "/${coin.id}")
+                            navController.navigate(Screen_routes.CoinDetail.route + "/${coin.id}")
                         })
 
                 }
@@ -83,9 +91,10 @@ fun TopTenCoins(
 
 @Composable
 fun CoinCard(
-    onItemClick: (Coin) -> Unit,
-    coin: Coin
+    onItemClick: (TickerEntity) -> Unit,
+    coin: TickerEntity
 ) {
+    val imageId = "${ coin.symbol.lowercase()}-${coin.name.lowercase().replace(" ","-")}"
     val gradientColor = Brush.verticalGradient(listOf(cardGradient1, cardGradient2))
     Column(
         modifier = Modifier
@@ -104,15 +113,48 @@ fun CoinCard(
                 .fillMaxWidth()
                 .padding(25.dp)
         ) {
-            GlideImage(imageModel = {"https://static.coinpaprika.com/coin/nexo-nexo/logo.png" },
-                modifier = Modifier.size(35.dp))
-            Text(text = coin.name, style = MaterialTheme.typography.body1, color = gold, modifier = Modifier.padding(start = 10.dp))
+            val link = "https://static.coinpaprika.com/coin/"+"$imageId"+"/logo.png"
+            println(link)
+            GlideImage(
+                imageModel = { link },
+                modifier = Modifier.size(35.dp)
+            )
+//
+            Text(
+                text = buildAnnotatedString {
+                    val symbolStyle = SpanStyle(
+                        gold, fontWeight = FontWeight.SemiBold, fontSize = 10.sp
+                    )
+                    append("${coin.name} ")
+                    pushStyle(symbolStyle)
+                    append(coin.symbol)
+                },
+                style = MaterialTheme.typography.body1,
+
+                modifier = Modifier.padding(start = 10.dp)
+
+                )
         }
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "$20,000", style = MaterialTheme.typography.h5, modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
+            val price:String = ("%.2f".format(coin.quotes.USD.price))
+            Text(
+                text = buildAnnotatedString {
+                    val symbolStyle = SpanStyle(
+                         fontWeight = FontWeight.SemiBold, color = Color.White
+                    )
+                    append("$")
+                    pushStyle(symbolStyle)
+                    append(price)
+                },
+                style = MaterialTheme.typography.h5,
+                color= gold,
+                modifier = Modifier.padding(start = 10.dp)
+
+            )
+
         }
 
         Row(
@@ -122,10 +164,243 @@ fun CoinCard(
                 .padding(15.dp)
         ) {
             Column {
+                val marketCap:String = (coin.quotes.USD.market_cap/1000000000).toString()
                 Text(text = "Market Cap", fontSize = 10.sp, color = Color.LightGray)
-                Text(text = "392B", style = MaterialTheme.typography.body1, color = Color.White)
+                Text(text = "${marketCap}B", style = MaterialTheme.typography.body1, color = Color.White)
             }
             Text(text = "Active", style = MaterialTheme.typography.body1, color = Color.Green)
+        }
+    }
+}
+
+@Composable
+fun CurrencyGrid(
+    viewModel: MainViewModel = hiltViewModel()
+) {
+    val state = viewModel.state.value
+    Row(){
+        state.coins.forEach{coin->
+            if (coin.rank == 1){
+                SelectedCurrency(coin = coin)
+            }
+        }
+        }
+    }
+
+
+@Composable
+fun SelectedCurrency(
+    coin: TickerEntity
+) {
+    Column(
+        verticalArrangement = Arrangement.Center
+    ) {
+        val imageId = "${ coin.symbol.lowercase()}-${coin.name.lowercase()}"
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 36.dp, end = 25.dp)
+        ) {
+            Text(
+                text = "Your Coin",
+                fontSize = 10.sp,
+                style = MaterialTheme.typography.body1,
+                color = Color.White,
+                modifier = Modifier.align(Alignment.Bottom)
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.stats),
+                contentDescription = "Globe",
+                modifier = Modifier.size(30.dp), tint = gold
+            )
+        }
+        BoxWithConstraints(
+            modifier = Modifier
+                .padding(start = 15.dp, end = 15.dp)
+                .aspectRatio(1.75f, matchHeightConstraintsFirst = true)
+                .border(
+                    1.dp, gold, shape = RoundedCornerShape(30.dp)
+                )
+                .clip(RoundedCornerShape(30.dp))
+                .background(card)
+
+
+        ) {
+            val width = constraints.maxWidth
+            val height = constraints.maxHeight
+            //medium colored path
+
+            val mediumColoredPoint1 = Offset(0f, height * 0.3f)
+            val mediumColoredPoint2 = Offset(width * 0.1f, height * 0.1f)
+            val mediumColoredPoint3 = Offset(width * 0.4f, height * 0.5f)
+            val mediumColoredPoint4 = Offset(width * 0.75f, height * 0.7f)
+            val mediumColoredPoint5 = Offset(width * 1.4f, -height.toFloat())
+            //medium Colored Path
+            val mediumColoredPath = Path().apply {
+                moveTo(mediumColoredPoint1.x, mediumColoredPoint1.y)
+                standardQuadFromTO(mediumColoredPoint1, mediumColoredPoint2)
+                standardQuadFromTO(mediumColoredPoint2, mediumColoredPoint3)
+                standardQuadFromTO(mediumColoredPoint3, mediumColoredPoint4)
+                standardQuadFromTO(mediumColoredPoint4, mediumColoredPoint5)
+                lineTo(width.toFloat() + 100f, height.toFloat() + 100f)
+                lineTo(-100f, height.toFloat() + 100f)
+                close()
+            }
+            //light colored path
+            val lightColoredPoint1 = Offset(0f,height*0.65f)
+            val lightColoredPoint2 = Offset(width*0.1f,height*0.4f)
+            val lightColoredPoint3 = Offset(width*0.3f,height*0.35f)
+            val lightColoredPoint4 = Offset(width*0.65f,height.toFloat())
+            val lightColoredPoint5 = Offset(width*1.7f,-height.toFloat() /3f)
+
+            val lightColoredPath = Path().apply {
+                moveTo(lightColoredPoint1.x,lightColoredPoint1.y)
+                standardQuadFromTO(lightColoredPoint1,lightColoredPoint2)
+                standardQuadFromTO(lightColoredPoint2,lightColoredPoint3)
+                standardQuadFromTO(lightColoredPoint3,lightColoredPoint4)
+                standardQuadFromTO(lightColoredPoint4,lightColoredPoint5)
+                lineTo(width.toFloat() + 100f,height.toFloat() +100f)
+                lineTo(-100f,height.toFloat() +100f)
+                close()
+
+            }
+            Canvas (modifier = Modifier.fillMaxSize()){
+                drawPath(
+                    path = mediumColoredPath,
+                    color = card1
+                )
+                drawPath(
+                    path = lightColoredPath,
+                    color = card2
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(15.dp)
+            ){
+                Column(modifier =Modifier.fillMaxWidth()
+                ) {
+                    Row(horizontalArrangement= Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth())
+                    {
+                        val link = "https://static.coinpaprika.com/coin/"+"$imageId"+"/logo.png"
+
+                        GlideImage(imageModel = {
+                             link
+
+                        },
+                            modifier = Modifier.size(60.dp)
+                        )
+
+                        Column {
+
+                            Text(
+                                text = buildAnnotatedString {
+                                    val symbolStyle = SpanStyle(
+                                        gold, fontWeight = FontWeight.SemiBold, fontSize = 15.sp
+                                    )
+                                    append( "${coin.name} " )
+                                    pushStyle(symbolStyle)
+                                    append(coin.symbol)
+                                },
+                                style = MaterialTheme.typography.h5,
+
+                                )
+                            Text(
+                                text = coin.quotes.USD.price.toString(),
+                                style = MaterialTheme.typography.body1,
+                                color = Color.White,
+                            )
+                        }
+                        Column {
+                            Text(
+                                text = "Total Supply",
+                                fontSize = 10.sp,
+                                color = Color.LightGray,
+                                modifier = Modifier
+                            )
+                            Text(
+                                text = coin.total_supply.toString(),
+                                style = MaterialTheme.typography.body1,
+                                color = Color.White,
+                            )
+                        }
+                    }
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(25.dp)
+                    ) {
+                        Column(
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "1h",
+                                color = Color.White,
+                                style = MaterialTheme.typography.h6
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Row {
+                                Text(
+                                    text = "${coin.quotes.USD.percent_change_1h}+%",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.body1
+                                )
+                                Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_upward_24) , contentDescription = "indicator", tint = Color.Green)
+                            }
+                        }
+                        Column(
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "24 h",
+                                color = Color.White,
+                                style = MaterialTheme.typography.h6
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Row {
+                                Text(
+                                    text = "${coin.quotes.USD.percent_change_24h}+%",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.body1
+                                )
+                                Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_downward_24) , contentDescription = "indicator", tint = Color.Red)
+                            }
+                        }
+                        Column(
+                            verticalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Text(
+                                text = "7 days",
+                                color = Color.White,
+                                style = MaterialTheme.typography.h6
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Row {
+                                Text(
+                                    text = "${coin.quotes.USD.percent_change_7d}+%",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.body1,
+                                )
+                                Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_downward_24) , contentDescription = "indicator", tint = Color.Red)
+
+                            }
+                        }
+                    }
+
+                }
+
+
+
+
+            }
         }
     }
 }

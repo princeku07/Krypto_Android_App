@@ -7,13 +7,11 @@ import androidx.compose.material.Surface
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.xperiencelabs.krypto.presenter.Screen
+import com.xperiencelabs.krypto.presenter.Screen_routes
 import com.xperiencelabs.krypto.presenter.SplashScreen
 import com.xperiencelabs.krypto.presenter.currency_detail.CoinDetail
 import com.xperiencelabs.krypto.presenter.events.components.EventScreen
-import com.xperiencelabs.krypto.presenter.home_screen.CoinListScreen
 import com.xperiencelabs.krypto.presenter.home_screen.HomeScreen
-import com.xperiencelabs.krypto.presenter.home_screen.components.TopTenCoins
 import com.xperiencelabs.krypto.presenter.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 //used to inject Dagger-Hilt dependencies
@@ -30,21 +28,21 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = Screen.SplashScreen.route)
+                    NavHost(navController = navController, startDestination = Screen_routes.SplashScreen.route)
                     {
-                        composable(route=Screen.SplashScreen.route){
+                        composable(route=Screen_routes.SplashScreen.route){
                             SplashScreen(navController = navController)
                         }
                         //homeScreen
-                        composable(route = Screen.HomeScreen.route){
+                        composable(route = Screen_routes.HomeScreen.route){
                             HomeScreen(navController)
                         }
                         //CoinDetail
-                        composable(route = Screen.CoinDetail.route + "/{coinId}"){
+                        composable(route = Screen_routes.CoinDetail.route + "/{coinId}"){
                             CoinDetail(navController)
                         }
                         //CoinEvents
-                        composable(route = Screen.EventsScreen.route +"/{coinId}"){
+                        composable(route = Screen_routes.EventsScreen.route +"/{coinId}"){
                             EventScreen()
                         }
                     }

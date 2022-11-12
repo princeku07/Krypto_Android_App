@@ -1,5 +1,6 @@
 package com.xperiencelabs.krypto.domain.use_case.get_currencies
 
+import com.xperiencelabs.krypto.data.remote.dto.TickerEntity
 import com.xperiencelabs.krypto.data.remote.dto.toCoin
 import com.xperiencelabs.krypto.domain.model.Coin
 import com.xperiencelabs.krypto.domain.repository.CoinRepository
@@ -18,13 +19,14 @@ class GetCoinsUseCase @Inject constructor(
     Flow can emit multiple values sequentially (used to receive live updates from a database).It is a stream of data
     that can be computed asynchronously.(Resource = https://developer.android.com/kotlin/flow)
      */
-    operator fun invoke(): Flow<Response<List<Coin>>> = flow {
+    operator fun invoke(): Flow<Response<List<TickerEntity>>> = flow {
         try {
                 emit(Response.Loading())
-            val coins = repository.getCoins().map {
-                it.toCoin() }
+//            val coins = repository.getCoins().map {
+//                it.toCoin() }
+            val tickers = repository.getTickers()
 
-            emit(Response.Success(coins.slice(0..10)))
+            emit(Response.Success(tickers.slice(0..100)))
         }
         catch (e:HttpException){
                 emit(Response.Error(e.localizedMessage ?: "error" ))

@@ -1,16 +1,14 @@
 package com.xperiencelabs.krypto.presenter.currency_detail
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.Image
+import com.skydoves.landscapist.glide.GlideImage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,12 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
+import com.skydoves.landscapist.glide.GlideImage
 import com.xperiencelabs.krypto.R
 import com.xperiencelabs.krypto.presenter.LottieAnimation
-import com.xperiencelabs.krypto.presenter.Screen
+import com.xperiencelabs.krypto.presenter.Screen_routes
 import com.xperiencelabs.krypto.presenter.theme.*
 import com.xperiencelabs.krypto.utils.TopBarCollapsedHeight
 import com.xperiencelabs.krypto.utils.TopBarExpandedHeight
@@ -65,52 +61,66 @@ fun CoinDetail(
                             ) {
 
                                 Column {
-                                    Box(Modifier.height(TopBarExpandedHeight - TopBarCollapsedHeight)) {
-
-                                        Image(painter = painterResource(id = R.drawable.coin_logo),
-                                            contentDescription = null,
-                                            modifier = Modifier.fillMaxSize()
-                                        )
-                                        Box(modifier = Modifier
-                                            .fillMaxSize()
-                                            .background(
-                                                Brush.verticalGradient(
-                                                    colorStops = arrayOf(
-                                                        Pair(0.4f, Color(0x00FFFFFF)),
-                                                        Pair(1f, DetailGradient2)
-                                                    )
-                                                )
-                                            ))
-                                        Row(
-                                            verticalAlignment = Alignment.Bottom,
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            modifier = Modifier
-                                                .fillMaxHeight()
-                                                .padding(horizontal = 20.dp),
-
-                                            )
-                                        {
-                                            val price:String = ("%.4f".format(tickers.quotes.USD.price))
-                                            Text(
-                                                text = buildAnnotatedString {
-                                                    val symbolStyle = SpanStyle(
-                                                        Color.White, fontWeight = FontWeight.SemiBold, fontSize = 20.sp
-                                                    )
-                                                    append("$ ")
-                                                    pushStyle(symbolStyle)
-                                                    append(price)
-                                                },
-                                                color = gold,
-                                                style = MaterialTheme.typography.h5,
+                                    val imageId = "${ tickers.symbol.lowercase()}-${tickers.name.lowercase().replace(oldValue = " ", newValue = "-")}"
+                                    Box {
+                                        Box(Modifier.height(TopBarExpandedHeight - TopBarCollapsedHeight)) {
+                                            val imageLink =
+                                                "https://static.coinpaprika.com/coin/$imageId/logo.png"
+                                            GlideImage(imageModel = { imageLink }, modifier = Modifier
+                                                .size(150.dp)
+                                                .align(
+                                                    Alignment.Center
+                                                ))
+                                            Box(
                                                 modifier = Modifier
-                                                    .clip(Shapes.small)
-                                                    .background(Color.Black)
-                                                    .padding(vertical = 6.dp, horizontal = 16.dp)
+                                                    .fillMaxSize()
+                                                    .background(
+                                                        Brush.verticalGradient(
+                                                            colorStops = arrayOf(
+                                                                Pair(0.4f, Color(0x00FFFFFF)),
+                                                                Pair(1f, DetailGradient2)
+                                                            )
+                                                        )
+                                                    )
                                             )
+                                            Row(
+                                                verticalAlignment = Alignment.Bottom,
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                modifier = Modifier
+                                                    .fillMaxHeight()
+                                                    .padding(horizontal = 20.dp),
 
+                                                )
+                                            {
+                                                val price: String =
+                                                    ("%.4f".format(tickers.quotes.USD.price))
+                                                Text(
+                                                    text = buildAnnotatedString {
+                                                        val symbolStyle = SpanStyle(
+                                                            Color.White,
+                                                            fontWeight = FontWeight.SemiBold,
+                                                            fontSize = 20.sp
+                                                        )
+                                                        append("$ ")
+                                                        pushStyle(symbolStyle)
+                                                        append(price)
+                                                    },
+                                                    color = gold,
+                                                    style = MaterialTheme.typography.h5,
+                                                    modifier = Modifier
+                                                        .clip(Shapes.small)
+                                                        .background(Color.Black)
+                                                        .padding(
+                                                            vertical = 6.dp,
+                                                            horizontal = 16.dp
+                                                        )
+                                                )
+                                                Text(text = "Rank - ${ tickers.rank.toString() }", color=Color.Green,modifier= Modifier.padding(5.dp))
+
+
+                                            }
 
                                         }
-
                                     }
                                     Column(
                                         Modifier
@@ -157,7 +167,7 @@ fun CoinDetail(
                                         style = MaterialTheme.typography.h6,
                                         color = Color.White,
                                         modifier = Modifier.clickable {
-                                            navController.navigate(Screen.EventsScreen.route + "/${tickers.id}")
+                                            navController.navigate(Screen_routes.EventsScreen.route + "/${tickers.id}")
                                         }
                                         )
                                 }
@@ -312,3 +322,5 @@ fun CoinDetail(
         }
     }
 }
+
+

@@ -18,9 +18,9 @@ data class CoinDetailDTO(
     val isNew: Boolean,
     @SerializedName("last_data_at")
     val lastDataAt: String,
-    val links: Links,
+
     @SerializedName("links_extended")
-    val linksExtended: List<LinksExtended>,
+
     val logo: String,
     val message: String,
     val name: String,

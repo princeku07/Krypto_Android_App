@@ -12,6 +12,10 @@ class CoinRepositoryImpl @Inject constructor(
         return api.getCoins()
     }
 
+    override suspend fun getTickers(): List<TickerEntity> {
+        return api.getTickers()
+    }
+
     override suspend fun getCoinsById(coinId:String): CoinDetailDTO {
         return api.getCoinById(coinId)
     }
@@ -22,5 +26,11 @@ class CoinRepositoryImpl @Inject constructor(
 
     override suspend fun getEvents(coinId: String): List<EventsEntity> {
         return api.getEvents(coinId)
+    }
+
+    override suspend fun getLatestNews(): List<NewsEntity> {
+        println("news")
+        return api.getLatestNews(5)
+
     }
 }
