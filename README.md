@@ -2,10 +2,10 @@
 <h3 align="center">Crypto market app with latest news and crypto currencies details</h3>
 <br>
 <h2 align="left">ScreenShots</h2>
-<img align="left"  style="border:10px solid red" src="https://github.com/princeku07/princeku07/blob/main/Ar.gif">
-<img align="left" width="400" style="border:10px solid red" src="https://github.com/princeku07/princeku07/blob/main/Ar.gif">
-<img align="left" width="400" style="border:10px solid red" src="https://github.com/princeku07/princeku07/blob/main/Ar.gif">
-<img align="left" width="400" style="border:10px solid red" src="https://github.com/princeku07/princeku07/blob/main/Ar.gif">
+<img align="left" height="400" width="200"  style="border:10px solid red" src="https://github.com/princeku07/Krypto_Android_App/blob/UI/app_part0.gif">
+<img align="left" height="400" width="200"  style="border:10px solid red" src="https://github.com/princeku07/Krypto_Android_App/blob/UI/app_part1.gif">
+<img align="left" height="400" width="200"  style="border:10px solid red" src="https://github.com/princeku07/Krypto_Android_App/blob/UI/app_part2.gif">
+<img align="left" height="400" width="200"  style="border:10px solid red" src="https://github.com/princeku07/Krypto_Android_App/blob/UI/app_part3.gif">
 <br>
 
 
