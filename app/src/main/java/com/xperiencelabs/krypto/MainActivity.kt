@@ -12,6 +12,7 @@ import com.xperiencelabs.krypto.presenter.SplashScreen
 import com.xperiencelabs.krypto.presenter.currency_detail.CoinDetail
 import com.xperiencelabs.krypto.presenter.events.components.EventScreen
 import com.xperiencelabs.krypto.presenter.home_screen.HomeScreen
+import com.xperiencelabs.krypto.presenter.home_screen.components.TopTenCoins
 import com.xperiencelabs.krypto.presenter.theme.*
 import dagger.hilt.android.AndroidEntryPoint
 //used to inject Dagger-Hilt dependencies
@@ -44,6 +45,14 @@ class MainActivity : ComponentActivity() {
                         //CoinEvents
                         composable(route = Screen_routes.EventsScreen.route +"/{coinId}"){
                             EventScreen()
+                        }
+                        //Top ten
+                        composable(route= Screen_routes.TopTen.route){
+                            TopTenCoins(navController = navController)
+                        }
+                        //Info
+                        composable(route = Screen_routes.Info.route){
+                            Info()
                         }
                     }
                 }

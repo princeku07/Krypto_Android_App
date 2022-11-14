@@ -20,3 +20,8 @@ val cardGradient2 = Color(0xFF00FF8B)
 val DetailGradient2 = Color(0xFF13296D)
 val DetailGradient1 = Color(0xFF00085A)
 val SplashText = Color(0xFF615B2B)
+val Box1 = Color(0xFF0E0D48)
+val Box2 = Color(0xFF0B1E3A)
+val Box3 = Color(0xFF040329)
+val lightGrey = Color(0xFF7D7D7E)
+

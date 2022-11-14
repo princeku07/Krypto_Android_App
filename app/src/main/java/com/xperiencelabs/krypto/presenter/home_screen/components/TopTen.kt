@@ -1,5 +1,6 @@
 package com.xperiencelabs.krypto.presenter.home_screen.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,9 +12,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,56 +38,89 @@ import com.xperiencelabs.krypto.R
 import com.xperiencelabs.krypto.data.remote.dto.TickerEntity
 import com.xperiencelabs.krypto.presenter.LottieAnimation
 import com.xperiencelabs.krypto.presenter.Screen_routes
+import com.xperiencelabs.krypto.presenter.home_screen.BottomBar
 import com.xperiencelabs.krypto.presenter.home_screen.MainViewModel
 import com.xperiencelabs.krypto.presenter.home_screen.standardQuadFromTO
 import com.xperiencelabs.krypto.presenter.theme.*
+import com.xperiencelabs.krypto.utils.BottomNavItem
 import kotlin.math.roundToInt
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun TopTenCoins(
     navController: NavController,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val  state = viewModel.state.value
-    Box(
-        modifier = Modifier.fillMaxSize()
+    val scaffoldState = rememberScaffoldState()
+    Scaffold(scaffoldState=scaffoldState,
+        bottomBar = {
+            BottomBar(items = listOf(
+                BottomNavItem(
+                    name = "Home",
+                    route = Screen_routes.HomeScreen.route,
+                    icon = Icons.Default.Home
+                ),
+                BottomNavItem(
+                    name = "Top",
+                    route = Screen_routes.TopTen.route,
+                    icon = Icons.Default.Star
+                ),
+
+                BottomNavItem(
+                    name = "Info",
+                    route = Screen_routes.Info.route,
+                    icon = Icons.Default.Info
+                )
+            ), navController = navController , onItemClick ={
+                navController.navigate(it.route)
+            } )
+        }
+
+
     ) {
-        Column {
-            Text(text = "Popular", style = MaterialTheme.typography.h6, color = Color.White, modifier = Modifier
-                .padding(15.dp)
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column {
+                Text(text = "Popular", style = MaterialTheme.typography.h6, color = Color.White, modifier = Modifier
+                    .padding(15.dp)
                 )
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp, bottom = 100.dp),
-                ){
-                items(state.coins){ coin->
-                    CoinCard(coin = coin,
-                        onItemClick = {
-                            navController.navigate(Screen_routes.CoinDetail.route + "/${coin.id}")
-                        })
 
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(start = 7.5.dp, end = 7.5.dp, bottom = 100.dp),
+                ){
+                    items(state.coins){ coin->
+                        CoinCard(coin = coin,
+                            onItemClick = {
+                                navController.navigate(Screen_routes.CoinDetail.route + "/${coin.id}")
+                            })
+
+                    }
                 }
             }
-        }
 
-        if(state.error.isNotBlank()){
-            Text(
-                text = state.error,
-                color = MaterialTheme.colors.error,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .align(Alignment.Center)
-            )
-        }
-        if(state.isLoading){
-            LottieAnimation()
+            if(state.error.isNotBlank()){
+                Text(
+                    text = state.error,
+                    color = MaterialTheme.colors.error,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .align(Alignment.Center)
+                )
+            }
+            if(state.isLoading){
+                LottieAnimation()
 //            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
     }
+
 }
 
 @Composable
@@ -175,13 +209,18 @@ fun CoinCard(
 
 @Composable
 fun CurrencyGrid(
+    navController:NavController,
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.value
     Row(){
         state.coins.forEach{coin->
             if (coin.rank == 1){
-                SelectedCurrency(coin = coin)
+                SelectedCurrency(coin = coin,
+                    onItemClick = {
+                        navController.navigate(Screen_routes.CoinDetail.route + "/${coin.id}")
+                    }
+                )
             }
         }
         }
@@ -190,10 +229,12 @@ fun CurrencyGrid(
 
 @Composable
 fun SelectedCurrency(
+    onItemClick: (TickerEntity) -> Unit,
     coin: TickerEntity
 ) {
     Column(
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.clickable { onItemClick(coin) }
     ) {
         val imageId = "${ coin.symbol.lowercase()}-${coin.name.lowercase()}"
         Row(
@@ -296,6 +337,7 @@ fun SelectedCurrency(
                         )
 
                         Column {
+                            val price:String = ("%.2f".format(coin.quotes.USD.price))
 
                             Text(
                                 text = buildAnnotatedString {
@@ -310,7 +352,7 @@ fun SelectedCurrency(
 
                                 )
                             Text(
-                                text = coin.quotes.USD.price.toString(),
+                                text = price,
                                 style = MaterialTheme.typography.body1,
                                 color = Color.White,
                             )
@@ -336,6 +378,7 @@ fun SelectedCurrency(
                             .fillMaxWidth()
                             .padding(25.dp)
                     ) {
+
                         Column(
                             verticalArrangement = Arrangement.SpaceBetween,
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -347,13 +390,16 @@ fun SelectedCurrency(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Row {
-                                Text(
-                                    text = "${coin.quotes.USD.percent_change_1h}+%",
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.body1
+                                val increased:Boolean = coin.quotes.USD.percent_change_1h < 0
+                                Text(text = "${ coin.quotes.USD.percent_change_1h}%", style = MaterialTheme.typography.body1,
+                                    color = if(increased) Color.Red else Color.Green
                                 )
-                                Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_upward_24) , contentDescription = "indicator", tint = Color.Green)
-                            }
+                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                    contentDescription = null,
+                                    tint = if(increased) Color.Red else Color.Green
+                                )
+
+                              }
                         }
                         Column(
                             verticalArrangement = Arrangement.SpaceBetween,
@@ -366,12 +412,14 @@ fun SelectedCurrency(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Row {
-                                Text(
-                                    text = "${coin.quotes.USD.percent_change_24h}+%",
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.body1
+                                val increased:Boolean = coin.quotes.USD.percent_change_24h < 0
+                                Text(text = "${ coin.quotes.USD.percent_change_24h}%", style = MaterialTheme.typography.body1,
+                                    color = if(increased) Color.Red else Color.Green
                                 )
-                                Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_downward_24) , contentDescription = "indicator", tint = Color.Red)
+                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                    contentDescription = null,
+                                    tint = if(increased) Color.Red else Color.Green
+                                )
                             }
                         }
                         Column(
@@ -384,13 +432,14 @@ fun SelectedCurrency(
                             )
                             Spacer(modifier = Modifier.height(10.dp))
                             Row {
-                                Text(
-                                    text = "${coin.quotes.USD.percent_change_7d}+%",
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.body1,
+                                val increased:Boolean = coin.quotes.USD.percent_change_7d < 0
+                                Text(text = "${ coin.quotes.USD.percent_change_7d}%", style = MaterialTheme.typography.body1,
+                                    color = if(increased) Color.Red else Color.Green
                                 )
-                                Icon(painter = painterResource(id = R.drawable.ic_baseline_arrow_downward_24) , contentDescription = "indicator", tint = Color.Red)
-
+                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                    contentDescription = null,
+                                    tint = if(increased) Color.Red else Color.Green
+                                )
                             }
                         }
                     }

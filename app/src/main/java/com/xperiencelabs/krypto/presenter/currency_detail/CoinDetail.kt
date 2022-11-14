@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,6 +27,8 @@ import com.skydoves.landscapist.glide.GlideImage
 import com.xperiencelabs.krypto.R
 import com.xperiencelabs.krypto.presenter.LottieAnimation
 import com.xperiencelabs.krypto.presenter.Screen_routes
+import com.xperiencelabs.krypto.presenter.currency_detail.components.ChangeTab
+import com.xperiencelabs.krypto.presenter.currency_detail.components.Tabs
 import com.xperiencelabs.krypto.presenter.theme.*
 import com.xperiencelabs.krypto.utils.TopBarCollapsedHeight
 import com.xperiencelabs.krypto.utils.TopBarExpandedHeight
@@ -156,19 +158,18 @@ fun CoinDetail(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 16.dp),
-                                horizontalArrangement = Arrangement.SpaceEvenly
+                                horizontalArrangement = Arrangement.Start
                             ) {
-                                Button(
+                                Button(modifier = Modifier.padding(end = 10.dp),
                                     onClick = {
-
-                                }, colors = ButtonDefaults.buttonColors(backgroundColor = gradient1)
+                                        navController.navigate(Screen_routes.EventsScreen.route + "/${tickers.id}")
+                                        },
+                                    colors = ButtonDefaults.buttonColors(backgroundColor = gradient1)
                                 ) {
                                     Text(text = "Events",
                                         style = MaterialTheme.typography.h6,
-                                        color = Color.White,
-                                        modifier = Modifier.clickable {
-                                            navController.navigate(Screen_routes.EventsScreen.route + "/${tickers.id}")
-                                        }
+                                        color = Color.White
+
                                         )
                                 }
                                 Button(
@@ -180,122 +181,181 @@ fun CoinDetail(
                                 }
                             }
                             Spacer(modifier = Modifier.height(7.dp))
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                            var selectedTabIndex by remember {
+                                mutableStateOf(0)
+                            }
+                            ChangeTab(
+                                tabs = listOf(
+                                    Tabs("Price"),
+                                    Tabs("Volume")
+
+                                )
+                            ){
+                                selectedTabIndex = it
+                            }
+
+                            val boxGradient = Brush.linearGradient(listOf(Box1,Box2,Box3))
+                            Column(
+                                verticalArrangement = Arrangement.SpaceBetween,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(gradient2)
+
+                                    .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(boxGradient)
+
+                                    .height(300.dp)
+                                    .width(500.dp)
                             ) {
-                                        val volume:String = ("%.4f".format(tickers.quotes.USD.price))
-                                        Column(verticalArrangement = Arrangement.Bottom,
+                                   Row(
+                                       horizontalArrangement = Arrangement.SpaceEvenly
+                                   ) {
+                                       when(selectedTabIndex){
 
-                                            modifier = Modifier
-                                                .padding(5.dp)
+                                           0 -> Column(
+                                               modifier = Modifier.padding(30.dp)
+                                           ) {
+                                               Row {
+                                                   Column {
+                                                       Row(
+                                                           verticalAlignment = Alignment.CenterVertically,
+                                                           horizontalArrangement = Arrangement.SpaceBetween,
+                                                           modifier = Modifier.padding(8.dp)
+                                                       ) {
+                                                           val increased:Boolean = tickers.quotes.USD.percent_change_15m < 0
+                                                           Text(text = "15m -" , modifier = Modifier.padding(end = 25.dp))
+                                                           Text(text = "${ tickers.quotes.USD.percent_change_15m}%", style = MaterialTheme.typography.body1,
+                                                               color = if(increased) Color.Red else Color.Green
+                                                           )
+                                                           Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                                               contentDescription = null,
+                                                               tint = if(increased) Color.Red else Color.Green
+                                                           )
 
-                                        ) {
+                                                       }
+                                                       Row(
+                                                           verticalAlignment = Alignment.CenterVertically,
+                                                           horizontalArrangement = Arrangement.SpaceBetween,
+                                                           modifier = Modifier.padding(8.dp)
+                                                       ) {
+                                                           val increased:Boolean = tickers.quotes.USD.percent_change_30m < 0
+                                                           Text(text = "30m -" , modifier = Modifier.padding(end = 25.dp))
+                                                           Text(text = "${ tickers.quotes.USD.percent_change_30m}%", style = MaterialTheme.typography.body1,
+                                                               color = if(increased) Color.Red else Color.Green
+                                                           )
+                                                           Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                                               contentDescription = null,
+                                                               tint = if(increased) Color.Red else Color.Green
+                                                           )
 
-                                            val increased:Boolean = tickers.quotes.USD.percent_change_1h < 0
-                                            Text(text = "1h", style = MaterialTheme.typography.h6)
-                                            Spacer(modifier = Modifier.height(12.dp))
-                                            Row(
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
-                                                    contentDescription = null,
-                                                    tint = if(increased) Color.Red else Color.Green
-                                                )
-                                                Text(text = tickers.quotes.USD.percent_change_1h.toString(), style = MaterialTheme.typography.body1,
-                                                    color = if(increased) Color.Red else Color.Green
-                                                )
-                                            }
+                                                       }
+                                                       Row(
+                                                           verticalAlignment = Alignment.CenterVertically,
+                                                           horizontalArrangement = Arrangement.SpaceBetween,
+                                                           modifier = Modifier.padding(8.dp)
+                                                       ) {
+                                                           val increased:Boolean = tickers.quotes.USD.percent_change_6h < 0
+                                                           Text(text = "1h -" , modifier = Modifier.padding(end = 25.dp))
+                                                           Text(text = "${ tickers.quotes.USD.percent_change_6h}%", style = MaterialTheme.typography.body1,
+                                                               color = if(increased) Color.Red else Color.Green
+                                                           )
+                                                           Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                                               contentDescription = null,
+                                                               tint = if(increased) Color.Red else Color.Green
+                                                           )
 
-                                        }
+                                                       }
+                                                   }
+                                                   Divider(color =Color(0xFF646464), modifier = Modifier
+                                                       .fillMaxHeight()
+                                                       .width(1.dp))
+                                                   Column {
+                                                       Row(
+                                                           verticalAlignment = Alignment.CenterVertically,
+                                                           horizontalArrangement = Arrangement.SpaceBetween,
+                                                           modifier = Modifier.padding(8.dp)
+                                                       ) {
+                                                           val increased:Boolean = tickers.quotes.USD.percent_change_24h < 0
+                                                           Text(text = "15m -" , modifier = Modifier.padding(end = 25.dp))
+                                                           Text(text = "${ tickers.quotes.USD.percent_change_24h}%", style = MaterialTheme.typography.body1,
+                                                               color = if(increased) Color.Red else Color.Green
+                                                           )
+                                                           Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                                               contentDescription = null,
+                                                               tint = if(increased) Color.Red else Color.Green
+                                                           )
 
-                                        Column(
-                                            verticalArrangement = Arrangement.Center,
-                                            modifier = Modifier
+                                                       }
+                                                       Row(
+                                                           verticalAlignment = Alignment.CenterVertically,
+                                                           horizontalArrangement = Arrangement.SpaceBetween,
+                                                           modifier = Modifier.padding(8.dp)
+                                                       ) {
+                                                           val increased:Boolean = tickers.quotes.USD.percent_change_7d < 0
+                                                           Text(text = "30m -" , modifier = Modifier.padding(end = 25.dp))
+                                                           Text(text = "${ tickers.quotes.USD.percent_change_7d}%", style = MaterialTheme.typography.body1,
+                                                               color = if(increased) Color.Red else Color.Green
+                                                           )
+                                                           Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                                               contentDescription = null,
+                                                               tint = if(increased) Color.Red else Color.Green
+                                                           )
 
-                                                .padding(5.dp)
-                                        ) {
-                                            val increased:Boolean = tickers.quotes.USD.percent_change_24h < 0
-                                            Text(text = "1d", style = MaterialTheme.typography.h6)
-                                            Spacer(modifier = Modifier.height(12.dp))
-                                            Row(
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
-                                                    contentDescription = null,
-                                                    tint = if(increased) Color.Red else Color.Green
-                                                )
-                                                Text(text = tickers.quotes.USD.percent_change_24h.toString(), style = MaterialTheme.typography.body1,
-                                                    color = if(increased) Color.Red else Color.Green
-                                                )
-                                            }
-                                        }
-                                        Column(
-                                            modifier = Modifier
+                                                       }
+                                                       Row(
+                                                           verticalAlignment = Alignment.CenterVertically,
+                                                           horizontalArrangement = Arrangement.SpaceBetween,
+                                                           modifier = Modifier.padding(8.dp)
+                                                       ) {
+                                                           val increased:Boolean = tickers.quotes.USD.percent_change_1y < 0
+                                                           Text(text = "1h -" , modifier = Modifier.padding(end = 25.dp))
+                                                           Text(text = "${ tickers.quotes.USD.percent_change_1y}%", style = MaterialTheme.typography.body1,
+                                                               color = if(increased) Color.Red else Color.Green
+                                                           )
+                                                           Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                                               contentDescription = null,
+                                                               tint = if(increased) Color.Red else Color.Green
+                                                           )
 
-                                                .padding(5.dp)
-                                        ) {
-                                            val increased:Boolean = tickers.quotes.USD.percent_change_7d < 0
-                                            Text(text = "1w", style = MaterialTheme.typography.h6)
-                                            Spacer(modifier = Modifier.height(12.dp))
-                                            Row(
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
-                                                    contentDescription = null,
-                                                    tint = if(increased) Color.Red else Color.Green
-                                                )
-                                                Text(text = tickers.quotes.USD.percent_change_7d.toString(), style = MaterialTheme.typography.body1,
-                                                    color = if(increased) Color.Red else Color.Green
-                                                )
-                                            }
-                                        }
-                                        Column(
-                                            modifier = Modifier
-
-                                                .padding(5.dp)
-                                        ) {
-                                            val increased:Boolean = tickers.quotes.USD.percent_change_30d < 0
-                                            Text(text = "1m", style = MaterialTheme.typography.h6)
-                                            Spacer(modifier = Modifier.height(12.dp))
-                                            Row(
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
-                                                    contentDescription = null,
-                                                    tint = if(increased) Color.Red else Color.Green
-                                                )
-                                                Text(text = tickers.quotes.USD.percent_change_30d.toString(), style = MaterialTheme.typography.body1,
-                                                    color = if(increased) Color.Red else Color.Green
-                                                )
-                                            }
-                                        }
-                                        Column(
-                                            modifier = Modifier
-                                                .padding(5.dp)
-                                        ) {
-                                            val increased:Boolean = tickers.quotes.USD.percent_change_1y < 0
-                                            Text(text = "1y", style = MaterialTheme.typography.h6)
-                                            Spacer(modifier = Modifier.height(12.dp))
-                                            Row(
-                                                horizontalArrangement = Arrangement.SpaceBetween
-                                            ) {
-                                                Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
-                                                    contentDescription = null,
-                                                    tint = if(increased) Color.Red else Color.Green
-                                                )
-                                                Text(text = tickers.quotes.USD.percent_change_1y.toString(), style = MaterialTheme.typography.body1,
-                                                    color = if(increased) Color.Red else Color.Green
-                                                )
-                                            }
-                                        }
+                                                       }
+                                                   }
+                                               }
 
 
 
 
 
+                                           }
+                                           
+                                           
+                                           1 -> Column(
+                                               modifier = Modifier.padding(30.dp)
+                                           ) {
+                                               Row(
+                                                   verticalAlignment = Alignment.CenterVertically
+                                               ) {
+                                                   Text(text = "1 day -", style = MaterialTheme.typography.h5, color = lightGrey,
+                                                   modifier = Modifier.padding(8.dp))
+                                                   Text(text = tickers.quotes.USD.volume_24h.toString(), style = MaterialTheme.typography.h6)
+
+                                               }
+                                               Row(
+                                                   verticalAlignment = Alignment.CenterVertically,
+                                                   modifier = Modifier.padding(8.dp)
+                                               ) {
+                                                   val increased:Boolean = tickers.quotes.USD.volume_24h_change_24h < 0
+                                                   Text(text = "${ tickers.quotes.USD.volume_24h_change_24h}%", style = MaterialTheme.typography.body1,
+                                                       color = if(increased) Color.Red else Color.Green
+                                                   )
+                                                   Icon(painter =  painterResource(id = if (increased) R.drawable.ic_baseline_arrow_downward_24 else R.drawable.ic_baseline_arrow_upward_24 ) ,
+                                                       contentDescription = null,
+                                                       tint = if(increased) Color.Red else Color.Green
+                                                   )
+
+                                               }
+                                               
+                                           }
+                                       }
+                                   }
                             }
 
                         }

@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -30,7 +28,7 @@ fun LatestNews(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(5.dp)
+            .padding(bottom = 25.dp)
     ) {
         Text(text = "Latest news", style = MaterialTheme.typography.h6, color = Color.White, modifier = modifier.padding(15.dp))
 //        LazyColumn(contentPadding = PaddingValues(start = 5.dp, end = 5.dp, bottom = 50.dp),

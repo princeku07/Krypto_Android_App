@@ -30,7 +30,7 @@ class CoinRepositoryImpl @Inject constructor(
 
     override suspend fun getLatestNews(): List<NewsEntity> {
         println("news")
-        return api.getLatestNews(5)
+        return api.getLatestNews(10)
 
     }
 }
