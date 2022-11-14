@@ -3,6 +3,7 @@
 Crypto Currency maket news and Currency information app.
 
 
+
 ## Tech Stack
 
 - Jetpack Compose
@@ -25,5 +26,42 @@ Crypto Currency maket news and Currency information app.
 
 </p>
 
+
+## api.coinpaprika.com/v1/ (Base Url)
+
+#### Get all items
+
+```http
+  GET /tickers/
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `api_key` | `string` | **Not Required** |
+
+- Returns total available coins.
+
+#### Get item
+
+```http
+  GET /tickers/{id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `string` | **Required**. Id of item to fetch |
+
+- Returns details of id.
+
+
+
+#### Get news
+```http
+  GET /tickers/news/latest?limit
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `limit`      | `int` | No. of news fetched |
 
 
