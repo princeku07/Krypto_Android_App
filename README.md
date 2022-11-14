@@ -1,4 +1,4 @@
-<h1 align="center">Krypto </h1>
+<h1 align="center">Krypto <img align="center" width="60" style="border:10px solid red" src="https://github.com/princeku07/Krypto_Android_App/blob/UI/app/src/main/res/drawable/krypto_logo.png"> </h1>
 <h3 align="center">Crypto market app with latest news and crypto currencies details</h3>
 
 - 🔭 I’m currently working on **Xperience**
