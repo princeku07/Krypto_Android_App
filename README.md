@@ -1,5 +1,5 @@
 
-# Krypto <img width="60" align="center" src="https://github.com/princeku07/Krypto_Android_App/blob/UI/app/src/main/res/drawable/logo.png" />
+# Krypt <img width="60" align="center" src="https://github.com/princeku07/Krypto_Android_App/blob/UI/app/src/main/res/drawable/logo.png" />
 Crypto Currency maket news and Currency information app.
 
 
